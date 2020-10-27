@@ -78,3 +78,7 @@ func RefreshToken() {
 		}
 	}
 }
+
+func authenticateUser() bool {
+	return false
+}
