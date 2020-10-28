@@ -98,7 +98,7 @@ func (h *BulksmsController) BulkSMS(c *gin.Context) {
 	}
 
 	reqObj := requestObject{
-		ShortCode:    from,
+		ShortCode:    helpers.GetDefaultEnv("NITAU_API_SHORTCODE_UID", from),
 		Text:         text,
 		PhoneNumbers: strings.Split(to, " "),
 	}

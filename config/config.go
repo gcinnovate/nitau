@@ -24,13 +24,14 @@ func init() {
 // Config is the top level cofiguration object
 type Config struct {
 	API struct {
-		Username  string `yaml:"username" env:"NITAU_API_USER" env-description:"API user name"`
-		Password  string `yaml:"password" env:"NITAU_API_PASSWORD" env-description:"API user password"`
-		Email     string `yaml:"email" env:"NITAU_API_EMAIL" env-description:"API user email address"`
-		AuthToken string `yaml:"authtoken" env:"NITAU_API_AUTH_TOKEN" env-description:"API JWT authorization token"`
-		RootURI   string `yaml:"rooturi" env:"NITAU_API_ROOT_URI" env-description:"API ROOT URI"`
-		MOurl     string `yaml:"mourl" env:"NITAU_API_MO_URL" env-description:"MO URL to POST incoming MO messages"`
-		SmsURL    string `yaml:"smsurl" env:"NITAU_API_SMS_URL" env-description:"API SMS endpoint"`
+		Username     string `yaml:"username" env:"NITAU_API_USER" env-description:"API user name"`
+		Password     string `yaml:"password" env:"NITAU_API_PASSWORD" env-description:"API user password"`
+		Email        string `yaml:"email" env:"NITAU_API_EMAIL" env-description:"API user email address"`
+		AuthToken    string `yaml:"authtoken" env:"NITAU_API_AUTH_TOKEN" env-description:"API JWT authorization token"`
+		RootURI      string `yaml:"rooturi" env:"NITAU_API_ROOT_URI" env-description:"API ROOT URI"`
+		MOurl        string `yaml:"mourl" env:"NITAU_API_MO_URL" env-description:"MO URL to POST incoming MO messages"`
+		SmsURL       string `yaml:"smsurl" env:"NITAU_API_SMS_URL" env-description:"API SMS endpoint"`
+		ShortCodeUID string `yaml:"shortcode_uid" env:"NITAU_API_SHORTCODE_UID" env-description:"NITAU short code UID"`
 	} `yaml:"api"`
 	Server struct {
 		Port string `yaml:"port" env:"NITAU_SERVER_PORT" env-description:"Server port" env-default:"5000"`
