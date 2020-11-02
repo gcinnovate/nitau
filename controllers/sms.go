@@ -28,7 +28,6 @@ func (h *SMSController) Default(c *gin.Context) {
 
 	apiURL := helpers.GetDefaultEnv("NITAU_API_SMS_URL", "https://msdg.uconnect.go.ug/api/v1/sms/")
 	token := os.Getenv("NITAU_API_AUTH_TOKEN")
-	log.Println("Used Token: ", token)
 
 	data := url.Values{}
 	data.Set("sender", from)
