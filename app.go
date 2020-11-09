@@ -31,7 +31,7 @@ func myTask() {
 }
 func executeCronJob() {
 	// gocron.Every(1).Minute().Do(helpers.RefreshToken)
-	gocron.Every(1).Day().At("23:00").Do(helpers.RefreshToken)
+	gocron.Every(365).Days().At("23:00").Do(helpers.RefreshToken)
 	<-gocron.Start()
 }
 
