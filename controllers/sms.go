@@ -34,7 +34,7 @@ func (h *SMSController) Default(c *gin.Context) {
 	data.Set("receiver", to)
 	data.Set("text", text)
 	if len(text) == 0 {
-		log.Fatalf("Message body cannot be empty: To:%+v Msg:%+v", to, text)
+		log.Printf("ERROR: Message body cannot be empty: To:%+v Msg:%+v", to, text)
 		c.JSON(
 			http.StatusBadRequest,
 			gin.H{"status": http.StatusBadRequest, "message": "Message body cannot be empty"})
@@ -55,12 +55,12 @@ func (h *SMSController) Default(c *gin.Context) {
 
 	resp, err := client.Do(r)
 	if err != nil && resp == nil {
-		log.Fatalf("Error sending request to API endpoint. %+v", err)
+		log.Printf("ERROR: Failed to sending request to API endpoint. %+v", err)
 	} else {
 		fmt.Println(resp.Status)
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			log.Fatalf("Couldn't parse response body. %+v", err)
+			log.Printf("ERROR: Couldn't parse response body. %+v", err)
 		}
 
 		log.Println("Response Body:", string(body))
@@ -87,11 +87,18 @@ func (h *BulksmsController) BulkSMS(c *gin.Context) {
 	// passwd := c.Query("password")
 	log.Printf("Sending SMS: From:%s, To:%s, [Msg: %s]", from, to, text)
 
-	if len(text) == 0 {
-		log.Fatalf("Message body cannot be empty: To:%+v Msg:%+v", to, text)
+	if len(text) == 0 || len(text) > 450 {
+		msgLen := len(text)
+		switch msgLen {
+		case 0:
+			log.Printf("ERROR: Message body cannot be empty: To:%+v Msg:%+v", to, text)
+		default:
+			log.Printf("ERROR: Message body too big [Length: %x]: To:%+v Msg:%+v", msgLen, to, text)
+		}
 		c.JSON(
 			http.StatusBadRequest,
-			gin.H{"status": http.StatusBadRequest, "message": "Message body cannot be empty"})
+			gin.H{"status": http.StatusBadRequest,
+				"message": fmt.Sprintf("Message body Empty or too big [Length:%v]", msgLen)})
 		c.Abort()
 		return
 	}
@@ -105,7 +112,7 @@ func (h *BulksmsController) BulkSMS(c *gin.Context) {
 	requestBody, err := json.Marshal(reqObj)
 
 	if err != nil {
-		log.Fatalln(err)
+		log.Printf("%v", err)
 	}
 
 	token := os.Getenv("NITAU_API_AUTH_TOKEN")
