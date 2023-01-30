@@ -8,7 +8,6 @@ import (
 	"github.com/gcinnovate/nitau/db"
 	"github.com/gcinnovate/nitau/helpers"
 	"github.com/gin-gonic/gin"
-	"github.com/jmoiron/sqlx"
 	"io/ioutil"
 	"log"
 	"math"
@@ -152,7 +151,7 @@ func (h *BulksmsController) BulkSMS(c *gin.Context) {
 		smsCount, ok := result["sms_count"].(int)
 		if ok {
 
-			db := c.MustGet("dbConn").(*sqlx.DB)
+			db := db.GetDB()
 			msgLen := int(math.Ceil(float64(len(text) / 150)))
 			recipientLength := len(strings.Split(to, " "))
 			msgCount := recipientLength * msgLen
