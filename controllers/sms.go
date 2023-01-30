@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"github.com/gcinnovate/nitau/db"
 	"github.com/gcinnovate/nitau/helpers"
 	"github.com/gin-gonic/gin"
 	"github.com/jmoiron/sqlx"
@@ -70,7 +71,7 @@ func (h *SMSController) Default(c *gin.Context) {
 
 		log.Println("Response Body:", string(body))
 	}
-	db := c.MustGet("dbConn").(*sqlx.DB)
+	db := db.GetDB()
 	msgLen := int(math.Ceil(float64(len(text) / 150)))
 	recipientLength := len(strings.Split(to, " "))
 	msgCount := recipientLength * msgLen
