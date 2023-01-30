@@ -71,9 +71,10 @@ func (h *SMSController) Default(c *gin.Context) {
 		log.Println("Response Body:", string(body))
 	}
 	db := db.GetDB()
-	msgLen := int(math.Ceil(float64(len(text) / 150)))
+	msgLen := len(text)
+	messagesInText := int(math.Ceil(float64(len(text) / 150)))
 	recipientLength := len(strings.Split(to, " "))
-	msgCount := recipientLength * msgLen
+	msgCount := recipientLength * messagesInText
 	tx := db.MustBegin()
 	tx.MustExec(`INSERT INTO sms_log (msg, msg_count, msg_len, from_msisdn, to_msisdns) 
 				VALUES ($1, $2, $3, $4, $5)`, text, msgCount, msgLen, from, to)
@@ -152,9 +153,10 @@ func (h *BulksmsController) BulkSMS(c *gin.Context) {
 		if ok {
 
 			db := db.GetDB()
-			msgLen := int(math.Ceil(float64(len(text) / 150)))
+			msgLen := len(text)
+			messagesInText := int(math.Ceil(float64(len(text) / 150)))
 			recipientLength := len(strings.Split(to, " "))
-			msgCount := recipientLength * msgLen
+			msgCount := recipientLength * messagesInText
 			tx := db.MustBegin()
 			tx.MustExec(`INSERT INTO sms_log (msg, msg_count, msg_len, from_msisdn, to_msisdns) 
 				VALUES ($1, $2, $3, $4, $5)`, text, msgCount, msgLen, from, to)
