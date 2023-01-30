@@ -76,6 +76,7 @@ func main() {
 func basicAuth() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
+		c.Set("dbConn", db.GetDB())
 		auth := strings.SplitN(c.Request.Header.Get("Authorization"), " ", 2)
 
 		if len(auth) != 2 || auth[0] != "Basic" {

@@ -5,15 +5,16 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"github.com/gcinnovate/nitau/helpers"
+	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
 	"io/ioutil"
 	"log"
+	"math"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
-
-	"github.com/gcinnovate/nitau/helpers"
-	"github.com/gin-gonic/gin"
 )
 
 // SMSController will hold the methods to
@@ -93,7 +94,7 @@ func (h *BulksmsController) BulkSMS(c *gin.Context) {
 		case 0:
 			log.Printf("ERROR: Message body cannot be empty: To:%+v Msg:%+v", to, text)
 		default:
-			log.Printf("ERROR: Message body too big [Length: %x]: To:%+v Msg:%+v", msgLen, to, text)
+			log.Printf("ERROR: Message body too big [Length: %d]: To:%+v Msg:%+v", msgLen, to, text)
 		}
 		c.JSON(
 			http.StatusBadRequest,
@@ -139,6 +140,16 @@ func (h *BulksmsController) BulkSMS(c *gin.Context) {
 		log.Printf("BulkSMS [Text:%s] [SMSCount:%v] ", text, result)
 		smsCount, ok := result["sms_count"].(int)
 		if ok {
+
+			db := c.MustGet("dbConn").(*sqlx.DB)
+			msgLen := int(math.Ceil(float64(len(text) / 150)))
+			recipientLength := len(strings.Split(to, " "))
+			msgCount := recipientLength * msgLen
+			tx := db.MustBegin()
+			tx.MustExec(`INSERT INTO sms_log (msg, msg_count, msg_len, from_msisdn, to_msisdns) 
+				VALUES ($1, $2, $3, $4, $5)`, text, msgCount, msgLen, from, to)
+			tx.Commit()
+
 			log.Printf("Bulk SMS successfully sent %s SMS", smsCount)
 			c.JSON(200, gin.H{"message": "Sent SMS"})
 			c.Abort()

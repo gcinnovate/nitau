@@ -21,3 +21,14 @@ CREATE TABLE IF NOT EXISTS users (
 );
 INSERT INTO users (username, password, name, email, phone, is_active)
     VALUES('api', crypt('test1234', gen_salt('bf')), 'API User', 'sekiskylink@gmail.com', '+256782820208', TRUE);
+
+CREATE TABLE IF NOT EXISTS sms_log (
+    id SERIAL PRIMARY KEY NOT NULL,
+    msg_count INTEGER,
+    msg_len INTEGER,
+    msg TEXT,
+    from_msisdn TEXT,
+    to_msisdns TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+
+);

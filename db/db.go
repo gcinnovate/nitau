@@ -13,7 +13,6 @@ import (
 var db *sqlx.DB
 
 func init() {
-	fmt.Println("vim-go")
 	psqlInfo := fmt.Sprintf("%s", config.NitauConf.Database.URI)
 
 	var err error
