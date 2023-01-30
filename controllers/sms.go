@@ -62,11 +62,22 @@ func (h *SMSController) Default(c *gin.Context) {
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			log.Printf("ERROR: Couldn't parse response body. %+v", err)
+			c.JSON(http.StatusServiceUnavailable, gin.H{
+				"message": "ERROR: Couldn't parse response body.",
+			})
+			c.Abort()
 		}
 
 		log.Println("Response Body:", string(body))
 	}
-
+	db := c.MustGet("dbConn").(*sqlx.DB)
+	msgLen := int(math.Ceil(float64(len(text) / 150)))
+	recipientLength := len(strings.Split(to, " "))
+	msgCount := recipientLength * msgLen
+	tx := db.MustBegin()
+	tx.MustExec(`INSERT INTO sms_log (msg, msg_count, msg_len, from_msisdn, to_msisdns) 
+				VALUES ($1, $2, $3, $4, $5)`, text, msgCount, msgLen, from, to)
+	tx.Commit()
 	c.JSON(200, gin.H{"message": "Sent SMS"})
 }
 
@@ -98,8 +109,7 @@ func (h *BulksmsController) BulkSMS(c *gin.Context) {
 		}
 		c.JSON(
 			http.StatusBadRequest,
-			gin.H{"status": http.StatusBadRequest,
-				"message": fmt.Sprintf("Message body Empty or too big [Length:%v]", msgLen)})
+			gin.H{"message": fmt.Sprintf("Message body Empty or too big [Length:%v]", msgLen)})
 		c.Abort()
 		return
 	}
