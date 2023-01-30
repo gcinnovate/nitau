@@ -70,15 +70,18 @@ func (h *SMSController) Default(c *gin.Context) {
 
 		log.Println("Response Body:", string(body))
 	}
-	db := db.GetDB()
-	msgLen := len(text)
-	messagesInText := int(math.Ceil(float64(len(text)) / float64(150)))
-	recipientLength := len(strings.Split(to, " "))
-	msgCount := recipientLength * messagesInText
-	tx := db.MustBegin()
-	tx.MustExec(`INSERT INTO sms_log (msg, msg_count, msg_len, from_msisdn, to_msisdns) 
+	logSMS := helpers.GetDefaultEnv("NITAU_API_LOG_SMS", "true")
+	if logSMS == "true" {
+		db := db.GetDB()
+		msgLen := len(text)
+		messagesInText := int(math.Ceil(float64(len(text)) / float64(150)))
+		recipientLength := len(strings.Split(to, " "))
+		msgCount := recipientLength * messagesInText
+		tx := db.MustBegin()
+		tx.MustExec(`INSERT INTO sms_log (msg, msg_count, msg_len, from_msisdn, to_msisdns) 
 				VALUES ($1, $2, $3, $4, $5)`, text, msgCount, msgLen, from, to)
-	tx.Commit()
+		tx.Commit()
+	}
 	c.JSON(200, gin.H{"message": "Sent SMS"})
 }
 
@@ -151,17 +154,18 @@ func (h *BulksmsController) BulkSMS(c *gin.Context) {
 		log.Printf("BulkSMS [Text:%s] [SMSCount:%v] ", text, result)
 		smsCount, ok := result["sms_count"].(int)
 		if ok {
-
-			db := db.GetDB()
-			msgLen := len(text)
-			messagesInText := int(math.Ceil(float64(len(text)) / float64(150)))
-			recipientLength := len(strings.Split(to, " "))
-			msgCount := recipientLength * messagesInText
-			tx := db.MustBegin()
-			tx.MustExec(`INSERT INTO sms_log (msg, msg_count, msg_len, from_msisdn, to_msisdns) 
+			logSMS := helpers.GetDefaultEnv("NITAU_API_LOG_SMS", "true")
+			if logSMS == "true" {
+				db := db.GetDB()
+				msgLen := len(text)
+				messagesInText := int(math.Ceil(float64(len(text)) / float64(150)))
+				recipientLength := len(strings.Split(to, " "))
+				msgCount := recipientLength * messagesInText
+				tx := db.MustBegin()
+				tx.MustExec(`INSERT INTO sms_log (msg, msg_count, msg_len, from_msisdn, to_msisdns) 
 				VALUES ($1, $2, $3, $4, $5)`, text, msgCount, msgLen, from, to)
-			tx.Commit()
-
+				tx.Commit()
+			}
 			log.Printf("Bulk SMS successfully sent %s SMS", smsCount)
 			c.JSON(200, gin.H{"message": "Sent SMS"})
 			c.Abort()

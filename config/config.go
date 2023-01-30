@@ -32,6 +32,7 @@ type Config struct {
 		MOurl        string `yaml:"mourl" env:"NITAU_API_MO_URL" env-description:"MO URL to POST incoming MO messages"`
 		SmsURL       string `yaml:"smsurl" env:"NITAU_API_SMS_URL" env-description:"API SMS endpoint"`
 		ShortCodeUID string `yaml:"shortcode_uid" env:"NITAU_API_SHORTCODE_UID" env-description:"NITAU short code UID"`
+		LogSMS       string `yaml:"log_sms" env:"NITAU_API_LOG_SMS" env-description:"NITAU whether to log SMS"`
 	} `yaml:"api"`
 	Server struct {
 		Port string `yaml:"port" env:"NITAU_SERVER_PORT" env-description:"Server port" env-default:"5000"`
