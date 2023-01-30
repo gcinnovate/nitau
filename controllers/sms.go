@@ -72,7 +72,7 @@ func (h *SMSController) Default(c *gin.Context) {
 	}
 	db := db.GetDB()
 	msgLen := len(text)
-	messagesInText := int(math.Ceil(float64(len(text) / 150.0)))
+	messagesInText := int(math.Ceil(float64(len(text)) / float64(150)))
 	recipientLength := len(strings.Split(to, " "))
 	msgCount := recipientLength * messagesInText
 	tx := db.MustBegin()
@@ -154,7 +154,7 @@ func (h *BulksmsController) BulkSMS(c *gin.Context) {
 
 			db := db.GetDB()
 			msgLen := len(text)
-			messagesInText := int(math.Ceil(float64(len(text) / 150.0)))
+			messagesInText := int(math.Ceil(float64(len(text)) / float64(150)))
 			recipientLength := len(strings.Split(to, " "))
 			msgCount := recipientLength * messagesInText
 			tx := db.MustBegin()
