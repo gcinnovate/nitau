@@ -64,7 +64,7 @@ func main() {
 		authorized.GET("/sendsms", sendsms.BulkSMS)
 
 		sms := new(controllers.SMSController)
-		authorized.POST("/sms", sms.Default)
+		authorized.GET("/sms", sms.Default)
 	}
 
 	// Handle error response when a route is not defined
@@ -101,7 +101,7 @@ func basicAuth() gin.HandlerFunc {
 }
 
 func authenticateUser(username, password string) bool {
-	log.Printf("Username:%s, password:%s", username, password)
+	// log.Printf("Username:%s, password:%s", username, password)
 	userObj := models.User{}
 	err := db.GetDB().QueryRowx(
 		"SELECT id, username, name, phone, email FROM users "+
