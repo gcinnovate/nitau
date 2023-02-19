@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jasonlvhit/gocron"
+
 	// Import godotenv for .env variables
 	"github.com/gcinnovate/nitau/config"
 	"github.com/gcinnovate/nitau/controllers"
@@ -63,7 +64,7 @@ func main() {
 		authorized.GET("/sendsms", sendsms.BulkSMS)
 
 		sms := new(controllers.SMSController)
-		v1.POST("/sms", sms.Default)
+		authorized.POST("/sms", sms.Default)
 	}
 
 	// Handle error response when a route is not defined
