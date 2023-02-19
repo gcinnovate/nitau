@@ -64,7 +64,7 @@ func main() {
 		authorized.GET("/sendsms", sendsms.BulkSMS)
 
 		sms := new(controllers.SMSController)
-		authorized.GET("/sms", sms.Default)
+		authorized.POST("/sms", sms.Default)
 	}
 
 	// Handle error response when a route is not defined
