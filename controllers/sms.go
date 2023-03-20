@@ -100,8 +100,8 @@ func (h *BulksmsController) BulkSMS(c *gin.Context) {
 	from := c.Query("from")
 	to := c.Query("to")
 	encodedText := c.Query("text")
-	text, err := url.QueryUnescape(encodedText)
-	if err != nil {
+	text, errDecoding := url.QueryUnescape(encodedText)
+	if errDecoding != nil {
 		text = encodedText
 	}
 	// user := c.Query("username")
