@@ -5,9 +5,6 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
-	"github.com/gcinnovate/nitau/db"
-	"github.com/gcinnovate/nitau/helpers"
-	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
 	"math"
@@ -15,6 +12,10 @@ import (
 	"net/url"
 	"os"
 	"strings"
+
+	"github.com/gcinnovate/nitau/db"
+	"github.com/gcinnovate/nitau/helpers"
+	"github.com/gin-gonic/gin"
 )
 
 // SMSController will hold the methods to
@@ -98,7 +99,11 @@ type requestObject struct {
 func (h *BulksmsController) BulkSMS(c *gin.Context) {
 	from := c.Query("from")
 	to := c.Query("to")
-	text := c.Query("text")
+	encodedText := c.Query("text")
+	text, err := url.QueryUnescape(encodedText)
+	if err != nil {
+		text = encodedText
+	}
 	// user := c.Query("username")
 	// passwd := c.Query("password")
 	log.Printf("Sending SMS: From:%s, To:%s, [Msg: %s]", from, to, text)
